@@ -1,13 +1,23 @@
 <script>
+	import { writable, derived, get } from 'svelte/store';
+	import { goto } from '$app/navigation'
   import AddCartModal from "$lib/components/AddCartModal.svelte";
+	import Toast from "$lib/components/Toast.svelte";
   import { addCartItem } from '$lib/stores/cart.js';
+	import { loginUser } from '$lib/stores/user.js';
 
   let { data } = $props();
   const { product } = data;
 
   let open = $state(false);
+	let toastMessage = $state('');
 
 	function addToCart() {
+		if (!get(loginUser)) {
+			toastMessage = 'Please login first'
+			return
+    }
+
     addCartItem(product)
     open = true
 	}
@@ -87,7 +97,7 @@
 		<!-- Action Buttons -->
 		<div class="action-buttons">
 			<button class="btn-add-cart" onclick={() => addToCart()}>Add to Cart</button>
-			<button class="btn-buy-now" onclick={() => buyNow()}>Buy Now</button>
+			<button class="btn-buy-now" onclick={() => goto(`/cart`)}>Pay Now</button>
 		</div>
 
 		<!-- Key Features -->
@@ -187,6 +197,9 @@
 </section>
 
 <AddCartModal {open} onclose={() => open = false}/>
+
+<Toast message={toastMessage} onclose={() => {toastMessage = null}}/>
+
 
 <style>
 	/* Main Product Section */

@@ -31,23 +31,46 @@ body {
 	overflow-x: hidden;
 }
 
-.btn-primary {
-	background: #FFD84D;
+button:not(.icon-btn) {
 	color: #121212;
-	padding: 18px 48px;
-	border-radius: 12px;
 	border: none;
+	border-radius: 12px;
 	font-size: 18px;
 	font-weight: 600;
 	cursor: pointer;
-	transition: all 0.3s;
+	padding: 18px 48px;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	transition: all 0.3s ease;
+}
+
+button:active {
+	transform: scale(0.98) !important;
+}
+
+.btn-primary {
+	background: #FFD84D;
 	box-shadow: 0 8px 24px rgba(255, 216, 77, 0.3);
 }
 
 .btn-primary:hover {
+	background: #FFC61A;
+	box-shadow: 0 6px 20px rgba(255, 216, 77, 0.4);
 	transform: translateY(-2px);
-	box-shadow: 0 12px 32px rgba(255, 216, 77, 0.4);
 }
+
+.btn-secondary {
+	background: transparent;
+	border: 2px solid #E0E0E0 !important;
+	margin-right: 12px;
+}
+
+.btn-secondary:hover {
+	background: #F5F5F7;
+	border-color: #C0C0C0;
+}
+
 
 /* Page Header */
 .page-header {
@@ -72,4 +95,71 @@ body {
 	font-size: 24px;
 	color: #7A7A7A;
 	line-height: 1.4;
+}
+
+/* Form Styles */
+.form-container {
+	background: #F5F5F7;
+	border-radius: 28px;
+	padding: 40px;
+	max-width: 600px;
+	margin: 0 auto;
+	box-shadow: 0 4px 16px rgba(0,0,0,0.04);
+}
+
+.form-container h2 {
+	font-size: 32px;
+	font-weight: 700;
+	margin-bottom: 32px;
+	text-align: center;
+}
+
+.product-form {
+	display: flex;
+	flex-direction: column;
+	gap: 24px;
+}
+
+.form-group {
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+}
+
+.form-group label {
+	font-size: 16px;
+	font-weight: 600;
+	color: #121212;
+}
+
+.form-control {
+	height: 56px;
+	background: #fff;
+	border: 1px solid #E0E0E0;
+	border-radius: 16px;
+	padding: 0 20px;
+	font-size: 16px;
+	transition: all 0.2s ease;
+}
+
+.form-control:focus {
+	outline: none;
+	border-color: #FFD84D;
+	box-shadow: 0 0 0 3px rgba(255, 216, 77, 0.3);
+}
+
+select.form-control {
+	appearance: none;
+	background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%237A7A7A' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+	background-repeat: no-repeat;
+	background-position: right 16px center;
+	background-size: 20px;
+	padding-right: 48px;
+}
+
+.form-actions {
+	display: flex;
+	justify-content: flex-end;
+	gap: 16px;
+	margin-top: 16px;
 }

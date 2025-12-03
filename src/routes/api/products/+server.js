@@ -1,5 +1,5 @@
 import { json, error } from '@sveltejs/kit'
-import mockData from "./mockData.js";
+import supabase from '$lib/db/supabase.js'
 
 
 // GET http://localhost:5173/api/products
@@ -8,7 +8,7 @@ export async function GET({ params, request }) {
   const { searchParams } = new URL(request.url);
   const id = searchParams.get('id');
 
-  let products = mockData;
+  let products = await supabase.queryProduct()
   if (id) {
     products = products.filter(product => product.id === Number(id));
   }
@@ -17,25 +17,23 @@ export async function GET({ params, request }) {
 }
 
 export async function POST({ request }) {
-  const data = await request.json();
-  mockData.push(data)
+  const newProduct = await request.json();
+  const error = await supabase.insertProduct(newProduct);
 
-  return json(mockData);
+  return json({ error });
 }
 
 export async function PUT({ request }) {
-  const data = await request.json();
+  const updateProduct = await request.json();
+  const error = await supabase.updateProduct(updateProduct);
 
-  return json(mockData.map(product => product.id === data.id ? data : product));
+  return json({ error });
 }
 
 export async function DELETE({ request }) {
   const { searchParams } = new URL(request.url);
   const id = searchParams.get('id');
 
-  return json(mockData.filter(product => product.id !== Number(id)));
-}
-
-async function fetchFromSupabase() {
-
+  const error = await supabase.deleteProduct(Number(id));
+  return json({ error });
 }

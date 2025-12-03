@@ -34,7 +34,7 @@
   function handlePay() {
     showToast('Pay success!');
 
-    // setTimeout(clearCart, 3500);
+    setTimeout(clearCart, 3500);
   }
 </script>
 
@@ -60,7 +60,7 @@
         <div class="cart-item" data-id={product.id}>
           <div class="item-thumbnail">{product.image}</div>
           <div class="item-info">
-            <h3 class="item-name">{product.name}</h3>
+            <h3 class="item-name" onclick={() => goto(`/products/${product.id}`)}>{product.name}</h3>
             <p class="item-config">Banana Yellow / 256GB</p>
             <div class="quantity-selector">
               <button class="qty-btn" onclick={() => updateCartItem(product.id, -1)}>−</button>
@@ -143,6 +143,7 @@
 		display: flex;
 		gap: 80px;
 		align-items: flex-start;
+    justify-content: center;
 	}
 
 	/* Left Column - Cart Items */
@@ -196,6 +197,7 @@
 		font-size: 22px;
 		font-weight: 600;
 		margin-bottom: 8px;
+    cursor: pointer;
 	}
 
 	.item-config {

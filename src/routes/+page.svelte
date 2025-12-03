@@ -35,6 +35,7 @@
 		padding: 160px 80px 100px;
 		min-height: 800px;
 		display: flex;
+		flex-wrap: wrap;
 		align-items: center;
 		justify-content: space-between;
 		background: linear-gradient(135deg, #FFFFFF 0%, #FFF7D6 100%);

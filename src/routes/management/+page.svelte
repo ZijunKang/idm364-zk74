@@ -2,10 +2,26 @@
   import Toast from "$lib/components/Toast.svelte";
 
   let products = $state([]);
-  let loading = $state(true);
+  let loading = $state(false);
   let editingProduct = $state(null);
   let showForm = $state(false);
   let toastMessage = $state('');
+
+  const fetchProducts = async () => {
+    loading = true;
+    try {
+      const response = await fetch('/api/products');
+      products = await response.json();
+    } catch (error) {
+      console.error('Failed to load products:', error);
+    } finally {
+      loading = false;
+    }
+  }
+
+  $effect(() => {
+    fetchProducts()
+  });
 
   let formData = $state({
     id: null,
@@ -16,38 +32,31 @@
     image: ''
   });
 
-  $effect(async () => {
-    loading = true;
-    try {
-      const response = await fetch('/api/products');
-      products = await response.json();
-    } catch (error) {
-      console.error('Failed to load products:', error);
-    } finally {
-      loading = false;
-    }
-  });
-
   async function addProduct() {
+    let product = {
+      ...formData,
+      price: Number(formData.price),
+    }
+    delete product.id;
     try {
       const response = await fetch('/api/products', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
         },
-        body: JSON.stringify({
-          ...formData,
-          price: Number(formData.price),
-          id: Date.now() // 简单生成唯一ID
-        })
+        body: JSON.stringify(product)
       });
 
       if (response.ok) {
-        const newProduct = await response.json();
-        products = [...products, newProduct];
-        resetForm();
-        showForm = false;
-        showToast('Product added successfully!');
+        const { error } = await response.json();
+        if(error) {
+          showToast(error.message);
+        } else {
+          resetForm();
+          showForm = false;
+          showToast('Product added successfully!');
+          fetchProducts()
+        }
       } else {
         throw new Error('Failed to add product');
       }
@@ -71,11 +80,15 @@
       });
 
       if (response.ok) {
-        const updatedProduct = await response.json();
-        products = products.map(p => p.id === updatedProduct.id ? updatedProduct : p);
-        resetForm();
-        showForm = false;
-        showToast('Product updated successfully!');
+        const { error } = await response.json();
+        if(error) {
+          showToast(error.message);
+        } else {
+          resetForm();
+          showForm = false;
+          showToast('Product updated successfully!');
+          fetchProducts()
+        }
       } else {
         throw new Error('Failed to update product');
       }
@@ -113,6 +126,7 @@
   }
 
   function resetForm() {
+    return
     formData = {
       id: null,
       category: '',
@@ -308,42 +322,16 @@
     justify-content: flex-end;
   }
 
-  .btn-primary, .btn-secondary, .btn-edit, .btn-delete {
-    height: 48px;
-    border: none;
-    border-radius: 16px;
-    font-size: 16px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.2s ease;
-    padding: 0 24px;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-  }
-
-  .btn-primary, .btn-edit {
+  .btn-edit {
     background: #FFD84D;
     color: #121212;
     box-shadow: 0 4px 16px rgba(255, 216, 77, 0.3);
   }
 
-  .btn-primary:hover, .btn-edit:hover {
+  .btn-edit:hover {
     background: #FFC61A;
     box-shadow: 0 6px 20px rgba(255, 216, 77, 0.4);
     transform: translateY(-2px);
-  }
-
-  .btn-secondary {
-    background: transparent;
-    border: 2px solid #E0E0E0;
-    color: #121212;
-    margin-right: 12px;
-  }
-
-  .btn-secondary:hover {
-    background: #F5F5F7;
-    border-color: #C0C0C0;
   }
 
   .btn-delete {
@@ -358,10 +346,6 @@
     transform: translateY(-2px);
   }
 
-  .btn-primary:active, .btn-secondary:active, .btn-edit:active, .btn-delete:active {
-    transform: scale(0.98);
-  }
-
   /* Loading State */
   .loading {
     text-align: center;
@@ -370,72 +354,6 @@
     color: #7A7A7A;
   }
 
-  /* Form Styles */
-  .form-container {
-    background: #F5F5F7;
-    border-radius: 28px;
-    padding: 40px;
-    max-width: 600px;
-    margin: 0 auto;
-    box-shadow: 0 4px 16px rgba(0,0,0,0.04);
-  }
-
-  .form-container h2 {
-    font-size: 32px;
-    font-weight: 700;
-    margin-bottom: 32px;
-    text-align: center;
-  }
-
-  .product-form {
-    display: flex;
-    flex-direction: column;
-    gap: 24px;
-  }
-
-  .form-group {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-  }
-
-  .form-group label {
-    font-size: 16px;
-    font-weight: 600;
-    color: #121212;
-  }
-
-  .form-control {
-      height: 56px;
-      background: #fff;
-      border: 1px solid #E0E0E0;
-      border-radius: 16px;
-      padding: 0 20px;
-      font-size: 16px;
-      transition: all 0.2s ease;
-  }
-
-  .form-control:focus {
-    outline: none;
-    border-color: #FFD84D;
-    box-shadow: 0 0 0 3px rgba(255, 216, 77, 0.3);
-  }
-
-  select.form-control {
-    appearance: none;
-    background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%237A7A7A' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
-    background-repeat: no-repeat;
-    background-position: right 16px center;
-    background-size: 20px;
-    padding-right: 48px;
-  }
-
-  .form-actions {
-    display: flex;
-    justify-content: flex-end;
-    gap: 16px;
-    margin-top: 16px;
-  }
 
   /* Products Table */
   .products-table-container {

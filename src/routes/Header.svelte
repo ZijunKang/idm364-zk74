@@ -1,16 +1,23 @@
 <script>
-  import { writable, derived, get } from 'svelte/store';
   import { goto } from '$app/navigation'
 	import { resolve } from '$app/paths';
 	import { page } from '$app/state';
+	import LoginModal from '$lib/components/LoginModal.svelte';
 
 	import { cartItems } from '$lib/stores/cart.js';
+	import { loginUser, logout } from '$lib/stores/user.js';
 
   let currentRoute = $state('/')
   let cartCount = $state(0)
+	let loginModalOpen = $state(false)
+	let username = $state('')
 
 	cartItems.subscribe(items => {
     cartCount = items.length
+  })
+
+	loginUser.subscribe(user => {
+		username = user?.username || ''
   })
 
   $effect(() => {
@@ -20,6 +27,11 @@
 	function showCart() {
     goto(`/cart`)
 	}
+
+	function handleLogout() {
+    logout()
+    goto(`/`)
+  }
 </script>
 
 <header>
@@ -28,18 +40,27 @@
 		<ul class="nav-links">
 			<li><a href={resolve('/')} class:active={currentRoute === '/'}>Home</a></li>
 			<li><a href={resolve('/products')} class:active={currentRoute === '/products'}>Products</a></li>
-			<li><a href={resolve('/management')} class:active={currentRoute === '/management'}>Product Management</a></li>
+			{#if username === 'admin'}
+				<li><a href={resolve('/management')} class:active={currentRoute === '/management'}>Product Management</a></li>
+			{/if}
 		</ul>
 		<div class="nav-icons">
 <!--			<button class="icon-btn">🔍</button>-->
-			<button class="icon-btn" style="position: relative;" onclick={showCart}>
-				🛒
-				<span class="cart-badge" >{cartCount}</span>
-			</button>
-			<button class="icon-btn">👤</button>
+			{#if username}
+				<button class="icon-btn" style="position: relative;" onclick={showCart}>
+					🛒
+					<span class="cart-badge">{cartCount}</span>
+				</button>
+				<span>{username}</span>
+				<span class="logout" onclick={handleLogout}>Logout</span>
+			{:else}
+				<button class="icon-btn" onclick={() => loginModalOpen = true}>👤</button>
+			{/if}
 		</div>
 	</nav>
 </header>
+
+<LoginModal open={loginModalOpen} onclose={() => loginModalOpen = false}/>
 
 <style>
 
@@ -121,6 +142,12 @@
 		display: flex;
 		align-items: center;
 		justify-content: center;
+	}
+
+	.logout {
+		color: #1f7aa7;
+		cursor: pointer;
+		font-weight: bold;
 	}
 
 	@media (max-width: 768px) {
