@@ -1,6 +1,11 @@
 # Preview
 https://idm364-zk74.vercel.app/
 
+Preset users:
++ user1: 12345
++ user2: 12345
++ admin: 12345
+
 # sv
 
 Everything you need to build a Svelte project, powered by [`sv`](https://github.com/sveltejs/cli).

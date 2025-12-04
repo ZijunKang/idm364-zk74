@@ -2,35 +2,40 @@ import { writable, derived, get } from 'svelte/store';
 import { browser, building, dev, version } from '$app/environment';
 import { loginUser } from './user.js'
 
-const readStorage = () => {
+const readStorage = async () => {
   if (!browser) return [];
 
-  if(!loginUser || !get(loginUser)) {
-    return []
-  }
+  let str = localStorage.getItem('user');
+  if(!str) return [];
 
-  const key = get(loginUser).username + '_cart';
-
-  let str = localStorage.getItem(key);
-  if(str !== null) {
-    return JSON.parse(str);
-  } else {
-    return [];
-  }
+  const { username } = JSON.parse(str);
+  const response = await fetch('/api/cart?username=' + username)
+  return await response.json()
 };
 
-const writeStorage = () => {
+const writeStorage = async () => {
   if (!browser) return;
 
-  const key = get(loginUser).username + '_cart';
-  localStorage.setItem(key, JSON.stringify(get(cartItems)));
+  const response = await fetch('/api/cart', {
+    method: 'PUT',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({
+      username: get(loginUser).username,
+      items: get(cartItems)
+    })
+  })
+  return await response.json()
 };
-
 
 export const cartItems = writable([]);
 export const initializeCart = async () => {
-  cartItems.set(readStorage())
+  cartItems.set(await readStorage())
 };
+
+// when press F5 or refresh page
+initializeCart().then(r => {})
 
 export const cartCount = derived(cartItems, $cartItems =>
     $cartItems.reduce((sum, item) => sum + item.quantity, 0)
@@ -52,7 +57,7 @@ export const addCartItem = async (newProduct) => {
     }
   });
 
-  writeStorage();
+  return await writeStorage();
 };
 
 export const updateCartItem = async (id, quantity) => {
@@ -65,7 +70,7 @@ export const updateCartItem = async (id, quantity) => {
     })
   });
 
-  writeStorage();
+  return await writeStorage();
 };
 
 export const removeCartItem = async (id) => {
@@ -73,11 +78,11 @@ export const removeCartItem = async (id) => {
     return items.filter(item => item.id !== id)
   })
 
-  writeStorage();
+  return await writeStorage();
 };
 
 export const clearCart = async () => {
   cartItems.set([]);
 
-  writeStorage();
+  return await writeStorage();
 };

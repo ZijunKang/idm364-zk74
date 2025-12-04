@@ -9,17 +9,22 @@
   let { data } = $props();
   const { product } = data;
 
-  let open = $state(false);
+  let addSuccessModalOpen = $state(false);
 	let toastMessage = $state('');
 
-	function addToCart() {
+	async function addToCart() {
 		if (!get(loginUser)) {
 			toastMessage = 'Please login first'
 			return
     }
 
-    addCartItem(product)
-    open = true
+    const error = await addCartItem(product)
+		if(error) {
+			toastMessage = error.message
+		} else {
+			addSuccessModalOpen = true
+		}
+
 	}
 </script>
 
@@ -196,7 +201,7 @@
 	</div>
 </section>
 
-<AddCartModal {open} onclose={() => open = false}/>
+<AddCartModal open={addSuccessModalOpen} onclose={() => addSuccessModalOpen = false}/>
 
 <Toast message={toastMessage} onclose={() => {toastMessage = null}}/>
 

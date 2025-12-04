@@ -32,9 +32,7 @@
   }
 
   function handlePay() {
-    showToast('Pay success!');
-
-    setTimeout(clearCart, 3500);
+    showToast('Mock Pay Success!');
   }
 </script>
 
