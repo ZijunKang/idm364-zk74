@@ -7,6 +7,8 @@
 	import { cartItems } from '$lib/stores/cart.js';
 	import { loginUser, logout } from '$lib/stores/user.js';
 
+	let menuOpen = $state(false)
+
   let currentRoute = $state('/')
   let cartCount = $state(0)
 	let loginModalOpen = $state(false)
@@ -36,14 +38,15 @@
 
 <header>
 	<nav>
-		<div class="logo">🍌 Banana</div>
-		<ul class="nav-links">
+		<div class="logo" onclick={() => menuOpen = !menuOpen}>🍌 Banana</div>
+		<ul class="nav-links" class:hidden={!menuOpen}>
 			<li><a href={resolve('/')} class:active={currentRoute === '/'}>Home</a></li>
 			<li><a href={resolve('/products')} class:active={currentRoute === '/products'}>Products</a></li>
 			{#if username === 'admin'}
 				<li><a href={resolve('/management')} class:active={currentRoute === '/management'}>Product Management</a></li>
 			{/if}
 		</ul>
+
 		<div class="nav-icons">
 <!--			<button class="icon-btn">🔍</button>-->
 			{#if username}
@@ -150,13 +153,33 @@
 		font-weight: bold;
 	}
 
-	@media (max-width: 768px) {
+	@media (max-width: 845px) {
 		nav {
 			padding-left: 20px;
 			padding-right: 20px;
 		}
 
 		.nav-links {
+			position: fixed;
+			top: 78px;
+			left: 23px;
+			background: #fdfdfb;
+			flex-direction: column;
+			justify-content: center;
+			align-items: center;
+			gap: 30px;
+			z-index: 1000;
+			transition: opacity 0.3s ease;
+			height: 264px;
+			padding: 0 20px;
+			border: solid 2px;
+			border-radius: 10px;
+		}
+
+		.nav-links a {
+			font-weight: bold;
+		}
+		.nav-links.hidden {
 			display: none;
 		}
 	}

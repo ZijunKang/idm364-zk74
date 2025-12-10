@@ -10,7 +10,7 @@
 <!-- Hero Section -->
 <section class="hero" id="home">
 	<div class="hero-content">
-		<h1>Meet the new BananaPhone 15.</h1>
+		<h1>Meet the new Banana Phone 15.</h1>
 		<h2>Brighter. Softer. More You.</h2>
 		<div class="hero-buttons">
 			<button class="btn-primary" onclick={() => goto(`/products/1`)}>Buy Now</button>
@@ -35,14 +35,13 @@
 		padding: 160px 80px 100px;
 		min-height: 800px;
 		display: flex;
-		flex-wrap: wrap;
 		align-items: center;
 		justify-content: space-between;
+		gap: 30px;
 		background: linear-gradient(135deg, #FFFFFF 0%, #FFF7D6 100%);
 	}
 
 	.hero-content {
-		max-width: 600px;
 		animation: fadeInUp 0.8s ease;
 	}
 
@@ -105,6 +104,8 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
+		flex-wrap: wrap;
+		gap: 30px;
   }
 
   .promo-content {
@@ -129,4 +130,10 @@
     font-size: 120px;
     box-shadow: 0 20px 60px rgba(0,0,0,0.15);
   }
+
+	@media (max-width: 850px) {
+		.hero {
+      flex-wrap: wrap;
+		}
+	}
 </style>

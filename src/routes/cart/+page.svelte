@@ -479,7 +479,7 @@
 		}
 
 		.cart-items {
-			max-width: 100%;
+			width: 100%;
 		}
 
 		.order-summary {
@@ -503,7 +503,6 @@
 		}
 
 		.cart-item {
-			flex-direction: column;
 			align-items: flex-start;
 			padding: 20px;
 		}
