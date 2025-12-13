@@ -12,18 +12,15 @@ const list = async () => {
 }
 
 const insert = async (product) => {
-  const { error } = await supabase.from('products').insert(product);
-  return error
+  return await supabase.from('products').insert(product);
 }
 
 const update = async (product) => {
-  const { error } =  await supabase.from('products').update(product).eq('id', product.id)
-  return error
+  return await supabase.from('products').update(product).eq('id', product.id)
 }
 
 const remove = async (id) => {
-  const { error } =  await supabase.from('products').delete().eq('id', id);
-  return error
+  return await supabase.from('products').delete().eq('id', id);
 }
 
 export default {
